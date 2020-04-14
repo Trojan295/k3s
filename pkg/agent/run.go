@@ -14,6 +14,7 @@ import (
 	systemd "github.com/coreos/go-systemd/daemon"
 	"github.com/rancher/k3s/pkg/agent/config"
 	"github.com/rancher/k3s/pkg/agent/containerd"
+	"github.com/rancher/k3s/pkg/agent/egresssnat"
 	"github.com/rancher/k3s/pkg/agent/flannel"
 	"github.com/rancher/k3s/pkg/agent/loadbalancer"
 	"github.com/rancher/k3s/pkg/agent/netpol"
@@ -79,6 +80,10 @@ func run(ctx context.Context, cfg cmds.Agent, lb *loadbalancer.LoadBalancer) err
 		if err := netpol.Run(ctx, nodeConfig); err != nil {
 			return err
 		}
+	}
+
+	if err := egresssnat.Run(ctx, nodeConfig); err != nil {
+		return err
 	}
 
 	<-ctx.Done()
